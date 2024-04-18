@@ -7,17 +7,19 @@ plugins {
     id("java-library")
 
     //Fairy framework plugin
-    id("io.fairyproject") version "0.7.1b6-SNAPSHOT"
+    id("io.fairyproject") version "0.7.1b7-SNAPSHOT"
 
     // Dependency management plugin
     id("io.spring.dependency-management") version "1.1.0"
 
     //Kotlin plugin
-    id("org.jetbrains.kotlin.jvm") version "1.9.22" apply false
+    id("org.jetbrains.kotlin.jvm") version "1.9.23" apply false
 
     //Shadow plugin, provides the ability to shade fairy and other dependencies to compiled jar
     id("com.github.johnrengelman.shadow") version "7.1.2"
 }
+
+val libPlugin = properties("lib.plugin").toBoolean()
 
 group = properties("group")
 version = properties("version")
@@ -27,8 +29,12 @@ fairy {
     name.set(properties("name"))
     // Main Package
     mainPackage.set(properties("package"))
-    // Fairy Package
-    fairyPackage.set(properties("package") + ".fairy")
+    if (libPlugin) {
+        fairyPackage.set("io.fairyproject")
+    } else {
+        // Fairy Package
+        fairyPackage.set(properties("package") + ".fairy")
+    }
 
     bukkitProperties().bukkitApi = "1.13"
 }
@@ -37,22 +43,33 @@ runServer {
     version.set(properties("spigot.version"))
 }
 
+val fairy by if (libPlugin) {
+    configurations.compileOnlyApi
+} else {
+    configurations.api
+}
+
 dependencies {
-    api("io.fairyproject:bukkit-bundles")
-    api("io.fairyproject:module.animation")
-    api("io.fairyproject:bukkit-command")
-    api("io.fairyproject:bukkit-menu")
-    api("io.fairyproject:module.hologram")
-    api("io.fairyproject:module.config")
-    api("io.fairyproject:bukkit-xseries")
-    api("io.fairyproject:bukkit-items")
-    api("io.fairyproject:module.nametag")
-    api("io.fairyproject:module.sidebar")
-    api("io.fairyproject:bukkit-visibility")
-    api("io.fairyproject:bukkit-visual")
-    api("io.fairyproject:bukkit-timer")
-    api("io.fairyproject:bukkit-nbt")
-    api("io.fairyproject:module.tablist")
+    if (libPlugin) {
+        compileOnlyApi("io.fairyproject:bukkit-platform")
+        api("io.fairyproject:bukkit-bootstrap")
+    } else {
+        api("io.fairyproject:bukkit-bundles")
+    }
+    fairy("io.fairyproject:module.animation")
+    fairy("io.fairyproject:bukkit-command")
+    fairy("io.fairyproject:bukkit-gui")
+    fairy("io.fairyproject:module.hologram")
+    fairy("io.fairyproject:module.config")
+    fairy("io.fairyproject:bukkit-xseries")
+    fairy("io.fairyproject:bukkit-items")
+    fairy("io.fairyproject:module.nametag")
+    fairy("io.fairyproject:module.sidebar")
+    fairy("io.fairyproject:bukkit-visibility")
+    fairy("io.fairyproject:bukkit-visual")
+    fairy("io.fairyproject:bukkit-timer")
+    fairy("io.fairyproject:bukkit-nbt")
+    fairy("io.fairyproject:module.tablist")
 }
 
 // Repositories
@@ -73,7 +90,25 @@ dependencies {
 
 tasks.withType(ShadowJar::class.java) {
     // Relocate fairy to avoid plugin conflict
-    relocate("io.fairyproject", "${properties("package")}.fairy")
-    relocate("net.kyori", "${properties("package")}.fairy.libs.kyori")
-    relocate("com.cryptomorin.xseries", "${properties("package")}.fairy.libs.xseries")
+    if (libPlugin) {
+        relocate("io.fairyproject.bootstrap", "${properties("package")}.fairy.bootstrap")
+
+        relocate("net.kyori", "io.fairyproject.libs.kyori")
+        relocate("com.cryptomorin.xseries", "io.fairyproject.libs.xseries")
+        relocate("org.yaml.snakeyaml", "io.fairyproject.libs.snakeyaml")
+        relocate("com.google.gson", "io.fairyproject.libs.gson")
+        relocate("com.github.retrooper.packetevents", "io.fairyproject.libs.packetevents")
+        relocate("io.github.retrooper.packetevents", "io.fairyproject.libs.packetevents")
+    } else {
+        val fairyPackage = properties("package") + ".fairy"
+        relocate("io.fairyproject", fairyPackage)
+
+        relocate("net.kyori", "$fairyPackage.libs.kyori")
+        relocate("com.cryptomorin.xseries", "$fairyPackage.libs.xseries")
+        relocate("org.yaml.snakeyaml", "$fairyPackage.libs.snakeyaml")
+        relocate("com.google.gson", "$fairyPackage.libs.gson")
+        relocate("com.github.retrooper.packetevents", "$fairyPackage.libs.packetevents")
+        relocate("io.github.retrooper.packetevents", "$fairyPackage.libs.packetevents")
+    }
+    relocate("io.fairyproject.bukkit.menu", "${properties("package")}.fairy.menu")
 }
