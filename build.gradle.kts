@@ -7,7 +7,7 @@ plugins {
     id("java-library")
 
     //Fairy framework plugin
-    id("io.fairyproject") version "0.7.1b7-SNAPSHOT"
+    id("io.fairyproject") version "0.7.5b3-SNAPSHOT"
 
     // Dependency management plugin
     id("io.spring.dependency-management") version "1.1.0"
@@ -56,20 +56,20 @@ dependencies {
     } else {
         api("io.fairyproject:bukkit-bundles")
     }
-    fairy("io.fairyproject:module.animation")
+    fairy("io.fairyproject:mc-animation")
     fairy("io.fairyproject:bukkit-command")
     fairy("io.fairyproject:bukkit-gui")
-    fairy("io.fairyproject:module.hologram")
-    fairy("io.fairyproject:module.config")
+    fairy("io.fairyproject:mc-hologram")
+    fairy("io.fairyproject:core-config")
     fairy("io.fairyproject:bukkit-xseries")
     fairy("io.fairyproject:bukkit-items")
-    fairy("io.fairyproject:module.nametag")
-    fairy("io.fairyproject:module.sidebar")
+    fairy("io.fairyproject:mc-nametag")
+    fairy("io.fairyproject:mc-sidebar")
     fairy("io.fairyproject:bukkit-visibility")
     fairy("io.fairyproject:bukkit-visual")
     fairy("io.fairyproject:bukkit-timer")
     fairy("io.fairyproject:bukkit-nbt")
-    fairy("io.fairyproject:module.tablist")
+    fairy("io.fairyproject:mc-tablist")
 }
 
 // Repositories
