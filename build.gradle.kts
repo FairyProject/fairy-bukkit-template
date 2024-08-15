@@ -7,7 +7,7 @@ plugins {
     id("java-library")
 
     //Fairy framework plugin
-    id("io.fairyproject") version "0.7.5b3-SNAPSHOT"
+    id("io.fairyproject") version "0.7.8b3-SNAPSHOT"
 
     // Dependency management plugin
     id("io.spring.dependency-management") version "1.1.0"
@@ -16,7 +16,7 @@ plugins {
     id("org.jetbrains.kotlin.jvm") version "1.9.23" apply false
 
     //Shadow plugin, provides the ability to shade fairy and other dependencies to compiled jar
-    id("com.github.johnrengelman.shadow") version "7.1.2"
+    id("com.github.johnrengelman.shadow") version "8.1.1"
 }
 
 val libPlugin = properties("lib.plugin").toBoolean()
@@ -41,6 +41,7 @@ fairy {
 
 runServer {
     version.set(properties("spigot.version"))
+    javaVersion.set(JavaVersion.VERSION_21)
 }
 
 val fairy by if (libPlugin) {
